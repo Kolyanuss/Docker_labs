@@ -3,5 +3,8 @@ services:
   run:
     container_name: node_container_lb1
     image: "node-lb1"
+    build:
+      context: .
+      dockerfile: dockerfile
     ports:
       - '3000:3000'
