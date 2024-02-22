@@ -1,23 +1,38 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'admin',
+  password: 'password',
+  database: 'test_db_node'
+});
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 
-// Підключення до бази даних (SQLite)
-const db = new sqlite3.Database(':memory:'); // Використовую тимчасову пам'ять для демонстрації
+// Підключення до бази даних
+connection.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to MySQL');
+});
 
 // Створення таблиці Car
-db.serialize(() => {
-  db.run('CREATE TABLE Car (id INT, model TEXT, year INT, price REAL)');
+connection.query('CREATE TABLE Car (id INT, model TEXT, year INT, price REAL)',
+  (err, results) => {// обробка помилок та результатів
+});
+connection.query('INSERT INTO Car (id, model, year, price) VALUES (1, "TESLA", 2077, 10999)', 
+  (err, results) => {
+    if (err) throw err;
+    console.log('Test info added successfully');
 });
 
 // Обробка запиту GET
 app.get('/cars', (req, res) => {
-  db.all('SELECT * FROM Car', (err, rows) => {
+  connection.query('SELECT * FROM Car', (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -29,7 +44,7 @@ app.get('/cars', (req, res) => {
 // Обробка запиту POST
 app.post('/cars', (req, res) => {
   const { id, model, year, price } = req.body;
-  db.run('INSERT INTO Car (id, model, year, price) VALUES (?, ?, ?, ?)', [id, model, year, price], (err) => {
+  connection.query('INSERT INTO Car (id, model, year, price) VALUES (?, ?, ?, ?)', [id, model, year, price], (err) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
