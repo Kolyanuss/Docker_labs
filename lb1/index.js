@@ -21,7 +21,7 @@ connection.connect((err) => {
 });
 
 // Створення таблиці Car
-connection.query('CREATE TABLE Car (id INT, model TEXT, year INT, price REAL)',
+connection.query('CREATE TABLE Car (id INT PRIMARY KEY, model TEXT, year INT, price REAL)',
   (err, results) => {// обробка помилок та результатів
 });
 connection.query('INSERT INTO Car (id, model, year, price) VALUES (1, "TESLA", 2077, 10999)', 
@@ -44,12 +44,45 @@ app.get('/cars', (req, res) => {
 // Обробка запиту POST
 app.post('/cars', (req, res) => {
   const { id, model, year, price } = req.body;
-  connection.query('INSERT INTO Car (id, model, year, price) VALUES (?, ?, ?, ?)', [id, model, year, price], (err) => {
+  connection.query(
+    'INSERT INTO Car (id, model, year, price) VALUES (?, ?, ?, ?)', 
+    [id, model, year, price], 
+    (err) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ message: 'Car added successfully' });
+    });
+});
+
+// Обробка запиту PUT
+app.put('/cars/:id', (req, res) => {
+  const { id } = req.params;
+  const { model, year, price } = req.body;
+  connection.query(
+    'UPDATE Car SET model = ?, year = ?, price = ? WHERE id = ?',
+    [model, year, price, id],
+    (err, results) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ message: `Car with id ${id} was updated.` });
+    }
+  );
+});
+
+// Обробка запиту DELETE
+app.delete('/cars/:id', (req, res) => {
+  const { id } = req.params;
+  connection.query('DELETE FROM Car WHERE id = ?', [id],  (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ message: 'Car added successfully' });
+    // res.json(rows);
+    res.json({ message: `Car with id ${id} was deleted.` });
   });
 });
 
