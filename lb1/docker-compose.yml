@@ -1,10 +1,15 @@
 version: "3.9"
 services:
   run:
-    container_name: node_container_lb1
+    container_name: node_con_lb1
     image: "node-lb1"
     build:
       context: .
       dockerfile: dockerfile
+    environment:
+        - "MYSQL_DATABASE=test_db_node"
+        - "MYSQL_USER=admin"
+        - "MYSQL_PASSWORD=password"
     ports:
       - '3000:3000'
+      - '3307:3306'

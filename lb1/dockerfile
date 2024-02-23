@@ -18,13 +18,16 @@ RUN apt-get update && apt-get install -y mariadb-server
 # Налаштуйте MySQL
 RUN service mysql start && \
     mysql -e "CREATE DATABASE IF NOT EXISTS test_db_node;" && \
-    mysql -e "CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password';" && \
-    mysql -e "GRANT ALL PRIVILEGES ON test_db_node.* TO 'admin'@'localhost';" && \
+    mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY 'password';" && \
+    mysql -e "GRANT ALL PRIVILEGES ON test_db_node.* TO 'admin'@'%';" && \
+    mysql -e "update mysql.user set host = '%' where user='root';" && \
     mysql -e "FLUSH PRIVILEGES;"
+
+# RUN apt-get install -y ufw && ufw allow 3306
 
 # Запустіть додаток
 CMD service mysql start && npm start
 
 # Відкриваємо порт, на якому працює ваш сервер
 EXPOSE 3000
-
+EXPOSE 3306
