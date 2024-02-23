@@ -24,7 +24,8 @@ connection.connect((err) => {
 connection.query('CREATE TABLE Car (id INT PRIMARY KEY, model TEXT, year INT, price REAL)',
   (err, results) => {// обробка помилок та результатів
 });
-connection.query('INSERT INTO Car (id, model, year, price) VALUES (1, "TESLA", 2077, 10999)', 
+
+connection.query('INSERT INTO Car (id, model, year, price) VALUES (1, "TESLA", 2077, 10999) ON DUPLICATE KEY UPDATE model="TESLA"', 
   (err, results) => {
     if (err) throw err;
     console.log('Test info added successfully');
