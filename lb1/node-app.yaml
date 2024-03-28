@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-mysql-app
+  template:
+    metadata:
+      labels:
+        app: node-mysql-app
+    spec:
+      containers:
+      - name: node-mysql-container
+        image: 0xkolyanus/test1
+        ports:
+        - containerPort: 3000
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: test_db_node
+        - name: MYSQL_USER
+          value: admin
+        - name: MYSQL_PASSWORD
+          value: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-mysql-service
+spec:
+  type: NodePort
+  selector:
+    app: node-mysql-app
+  ports:
+   - name: node-port
+     port: 3000
+     targetPort: 3000
+   - name: mysql-port
+     port: 3307
+     targetPort: 3306

@@ -13,3 +13,9 @@ when you first start, nothing should be
 - `curl -X POST -H "Content-Type: application/json" -d '{"id": 1, "model": "Toyota", "year": 2022, "price": 25000}' http://localhost:3000/cars`
 
 then check again
+
+## LB2 - In progress
+### Run:
+`kubectl apply -f node-app.yaml`
+### To see ports:
+`minikube service node-mysql-service --url`
