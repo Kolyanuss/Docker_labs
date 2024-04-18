@@ -1,0 +1,23 @@
+FROM node:21
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+COPY index.js ./
+
+RUN npm install
+RUN apt-get update && apt-get install -y mariadb-server
+
+COPY entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
+COPY init_db.sql ./
+
+RUN mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
+
+# Відкриваємо доступ до бд із зовні і відкриваємо логи
+# RUN sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+
+EXPOSE 3000
+EXPOSE 3306
+
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
